@@ -1,0 +1,5 @@
+export { UserInstance } from './user.interface'
+export { PostInterface } from './post.interface'
+export { CommentInstance } from './comment.interface'
+export { ReplyInstance } from './reply.interface'
+export { LikeInstance } from './like.interface'
