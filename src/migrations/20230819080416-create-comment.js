@@ -1,29 +1,23 @@
 module.exports = {
   up: async (queryInterface, DataTypes) => {
-    await queryInterface.createTable("Users", {
+    await queryInterface.createTable("Comments", {
       id: {
         type: DataTypes.INTEGER,
+        primaryKey: true,
         allowNull: false,
         autoIncrement: true,
-        primaryKey: true,
       },
-      full_name: {
-        type: DataTypes.STRING,
-        allowNull: false
-      },
-      email: {
-        type: DataTypes.STRING,
-        allowNull: false
-      },
-      email_verified: {
-        type: DataTypes.STRING,
+      user_id:{
+        type: DataTypes.INTEGER,
         allowNull: false,
-        default:false
+        unique: true
       },
-      otp:{
-        type: DataTypes.INTEGER
+      post_id:{
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        unique: true,
       },
-      password: {
+      description: {
         type: DataTypes.STRING,
         allowNull: false
       },
@@ -42,6 +36,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, DataTypes) => {
-    await queryInterface.dropTable("Users");
+    await queryInterface.dropTable("Comments");
   }
 };
