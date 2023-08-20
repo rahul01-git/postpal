@@ -50,6 +50,55 @@ exports.userResolver = {
                 console.error('Error registering user:', error);
                 throw new Error('Could not register user: ' + error);
             }
+        },
+        verifyEmail: async (parent, args) => {
+            try {
+                const { error } = validator_1.verifyEmailSchema.validate(args.data);
+                if (error)
+                    throw error;
+                const { email, code } = args.data;
+                const otp = Number(code);
+                const user = await models_1.User.findOne({ where: { email } });
+                if (user && user.dataValues.email_verified) {
+                    console.log('Email is already verified');
+                    return {
+                        success: true,
+                        message: `User: ${user.dataValues.full_name} has already verified their email: ${user.dataValues.email}`
+                    };
+                }
+                if (user && user.dataValues.otp === otp) {
+                    await models_1.User.update({ email_verified: true, otp: null }, {
+                        where: {
+                            email
+                        }
+                    });
+                    console.log('Email Verification Success');
+                    return {
+                        success: true,
+                        message: `User: ${user.dataValues.full_name} has successfully verified their email: ${user.dataValues.email}`
+                    };
+                }
+                if (user && user.dataValues.otp !== otp) {
+                    console.log('The otp does not matches');
+                    return {
+                        success: false,
+                        message: `The verification code does not match please re-enter the verification code`
+                    };
+                }
+                else {
+                    return {
+                        success: false,
+                        message: `No user found with the provide email ${email}`
+                    };
+                }
+            }
+            catch (error) {
+                console.log(`Error while verifying email: ${error}`);
+                return {
+                    success: false,
+                    message: ` Error: ${error}`
+                };
+            }
         }
     }
 };

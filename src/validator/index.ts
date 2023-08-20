@@ -1,1 +1,1 @@
-export { registerSchema } from './registerInput.validator'
+export { registerSchema,verifyEmailSchema } from './input.validator'

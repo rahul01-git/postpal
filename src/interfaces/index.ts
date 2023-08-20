@@ -1,4 +1,4 @@
-export { UserInstance,UserSignupInterface } from './user.interface'
+export { UserInstance,UserSignupInterface,UserEmailVerifyInterface } from './user.interface'
 export { PostInterface } from './post.interface'
 export { CommentInstance } from './comment.interface'
 export { ReplyInstance } from './reply.interface'

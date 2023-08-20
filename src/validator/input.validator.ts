@@ -7,3 +7,8 @@ export const registerSchema = Joi.object().keys({
     email: Joi.string().email().required().label('Email'),
     password: Joi.string().required().min(4).max(12).label('Password')
 })
+
+export const verifyEmailSchema = Joi.object().keys({
+    email: Joi.string().email().required().label("Email"),
+    code: Joi.number().required().label("OTP")
+})

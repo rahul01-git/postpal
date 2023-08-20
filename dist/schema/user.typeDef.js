@@ -15,6 +15,16 @@ exports.userTypeDefs = `#graphql
         password:String
     }
 
+    input UserEmailVerify {
+        email: String
+        code: String
+    }
+
+    type Response{
+        success: Boolean
+        message: String
+    }
+
 
     type Query{
         getAllUsers: [User]
@@ -22,5 +32,6 @@ exports.userTypeDefs = `#graphql
 
     type Mutation{
         registerUser(data: UserRegisterInput!): User
+        verifyEmail(data: UserEmailVerify!) : Response!
     }
 `;
