@@ -8,6 +8,7 @@ const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const models_1 = require("../models");
 const validator_1 = require("../validator");
 const nodemailer_1 = require("../helpers/nodemailer");
+const jwt_sign_1 = require("../helpers/jwt.sign");
 exports.userResolver = {
     Query: {
         getAllUsers: async (_, {}) => {
@@ -99,6 +100,51 @@ exports.userResolver = {
                     message: ` Error: ${error}`
                 };
             }
-        }
+        },
+        loginUser: async (parent, args) => {
+            try {
+                const { error } = validator_1.LoginSchema.validate(args.data);
+                if (error)
+                    throw error;
+                const { email, password } = args.data;
+                const user = await models_1.User.findOne({ where: { email } });
+                if (user && !user.dataValues.email_verified) {
+                    console.log('Email is not verified yet!!!');
+                    return {
+                        success: false,
+                        message: `Email: ${email} is not verified yet please verify through code sent on your email`,
+                    };
+                }
+                if (user && user.dataValues.email_verified) {
+                    const isAuthorized = await bcryptjs_1.default.compare(password, user === null || user === void 0 ? void 0 : user.dataValues.password);
+                    if (!isAuthorized) {
+                        return {
+                            success: false,
+                            message: `Incorrect password`,
+                        };
+                    }
+                    const issuedToken = (0, jwt_sign_1.getJwtToken)(user.dataValues.id, user.dataValues.email);
+                    return {
+                        success: true,
+                        message: `Email: ${email} is verified you can proceed to login now`,
+                        user_id: user.dataValues.id || null,
+                        token: issuedToken.token,
+                        expiresIn: issuedToken.expiresIn
+                    };
+                }
+                else {
+                    return {
+                        success: false,
+                        message: `Email ${email} not registered`,
+                    };
+                }
+            }
+            catch (error) {
+                return {
+                    success: false,
+                    message: `Error: ${error}`,
+                };
+            }
+        },
     }
 };

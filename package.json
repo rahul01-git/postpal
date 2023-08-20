@@ -15,6 +15,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
+    "@types/jsonwebtoken": "^9.0.2",
     "@types/nodemailer": "^6.4.9",
     "nodemon": "^3.0.1",
     "sequelize-cli": "^6.6.1",

@@ -1,9 +1,9 @@
 import bcrypt from 'bcryptjs'
 
-import { UserEmailVerifyInterface, UserInstance, UserSignupInterface } from "../interfaces";
+import { UserEmailVerifyInterface, UserLoginInterface, UserSignupInterface } from "../interfaces";
 import { User } from "../models"
-import { registerSchema, verifyEmailSchema } from "../validator";
-import { emailVerifyTemplate, sendEmail } from '../helpers/nodemailer';
+import { LoginSchema, registerSchema, verifyEmailSchema } from "../validator";
+import { emailVerifyTemplate, sendEmail, getJwtToken } from '../helpers';
 
 
 export const userResolver = {
@@ -102,6 +102,55 @@ export const userResolver = {
         }
 
       }
-    }
+    },
+
+    loginUser: async (parent: ParentNode, args: { data: UserLoginInterface }) => {
+      try {
+        const { error } = LoginSchema.validate(args.data)
+        if (error) throw error
+
+        const { email, password } = args.data
+        const user = await User.findOne({ where: { email } })
+
+        if (user && !user.dataValues.email_verified) {
+          console.log('Email is not verified yet!!!');
+          return {
+            success: false,
+            message: `Email: ${email} is not verified yet please verify through code sent on your email`,
+          }
+        }
+        if (user && user.dataValues.email_verified) {
+          const isAuthorized = await bcrypt.compare(password, user?.dataValues.password)
+
+          if (!isAuthorized) {
+            return {
+              success: false,
+              message: `Incorrect password`,
+            }
+          }
+
+          const issuedToken = getJwtToken(user.dataValues.id, user.dataValues.email)
+          return {
+            success: true,
+            message: `Email: ${email} is verified you can proceed to login now`,
+            user_id: user.dataValues.id || null,
+            token: issuedToken.token,
+            expiresIn: issuedToken.expiresIn
+          }
+        } else {
+          return {
+            success: false,
+            message: `Email ${email} not registered`,
+          }
+
+        }
+
+      } catch (error) {
+        return {
+          success: false,
+          message: `Error: ${error}`,
+        }
+      }
+    },
   }
 }

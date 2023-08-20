@@ -12,3 +12,7 @@ export const verifyEmailSchema = Joi.object().keys({
     email: Joi.string().email().required().label("Email"),
     code: Joi.number().required().label("OTP")
 })
+export const LoginSchema = Joi.object().keys({
+    email: Joi.string().email().required().label("Email"),
+    password: Joi.string().required().label('Password')
+})

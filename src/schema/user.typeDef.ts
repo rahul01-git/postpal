@@ -17,9 +17,22 @@ export const userTypeDefs = `#graphql
         code: String
     }
 
+    input UserLoginInput{
+        email: String
+        password: String
+    }
+
     type Response{
         success: Boolean
         message: String
+    }
+
+    type LoginResponse{
+        success: Boolean!
+        message: String!
+        user_id: Int
+        token: String
+        expiresIn: String
     }
 
 
@@ -30,5 +43,6 @@ export const userTypeDefs = `#graphql
     type Mutation{
         registerUser(data: UserRegisterInput!): User
         verifyEmail(data: UserEmailVerify!) : Response!
+        loginUser(data: UserLoginInput!): LoginResponse
     }
 `;

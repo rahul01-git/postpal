@@ -22,3 +22,8 @@ export interface UserEmailVerifyInterface {
     email: string,
     code: number
 }
+
+export interface UserLoginInterface{
+    email:string,
+    password:string
+}
