@@ -1,0 +1,28 @@
+'use strict';
+Object.defineProperty(exports, "__esModule", { value: true });
+/** @type {import('sequelize-cli').Seeders} */
+module.exports = {
+    up: async (queryInterface, Sequelize) => {
+        await queryInterface.bulkInsert('Posts', [
+            {
+                id: 1,
+                description: 'First post by John Doe',
+                like_count: 10,
+                user_id: 1,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+            {
+                id: 2,
+                description: 'A post by Jane Smith',
+                like_count: 5,
+                user_id: 2,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            },
+        ]);
+    },
+    down: async (queryInterface, Sequelize) => {
+        await queryInterface.bulkDelete('Posts', null, {});
+    }
+};

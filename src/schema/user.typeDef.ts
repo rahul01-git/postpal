@@ -1,10 +1,34 @@
 export const userTypeDefs = `#graphql
-    type Book {
-        id: ID!
-        title: String!
-    } 
+    type User {
+        id: Int,
+        full_name: String!,
+        email:String!,
+        email_verified: Boolean!  
+    }
     
-    type Query {
-        books: [Book!]!
+    input UserRegisterInput{
+        full_name: String,
+        email: String,
+        password:String
+    }
+
+    input UserEmailVerify {
+        email: String
+        code: String
+    }
+
+    type Response{
+        success: Boolean
+        message: String
+    }
+
+
+    type Query{
+        getAllUsers: [User]
+    }
+
+    type Mutation{
+        registerUser(data: UserRegisterInput!): User
+        verifyEmail(data: UserEmailVerify!) : Response!
     }
 `;

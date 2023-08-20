@@ -11,3 +11,9 @@ export interface UserInstance extends Model {
     updated_at: Date;
     deleted_at: Date | null;
 }
+
+export interface UserSignupInterface {
+    full_name: string,
+    email: string,
+    password: string,
+}
