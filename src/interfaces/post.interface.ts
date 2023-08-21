@@ -9,3 +9,8 @@ export interface PostInterface extends Model {
     updated_at: Date;
     deleted_at: Date | null;
 }
+
+export interface GetAllPostInterface {
+    page: number,
+    size: number
+}

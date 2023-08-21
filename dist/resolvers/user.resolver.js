@@ -7,8 +7,7 @@ exports.userResolver = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const models_1 = require("../models");
 const validator_1 = require("../validator");
-const nodemailer_1 = require("../helpers/nodemailer");
-const jwt_sign_1 = require("../helpers/jwt.sign");
+const helpers_1 = require("../helpers");
 exports.userResolver = {
     Query: {
         getAllUsers: async (_, {}) => {
@@ -39,11 +38,11 @@ exports.userResolver = {
                     otp,
                     password: hashedPass
                 });
-                await (0, nodemailer_1.sendEmail)({
+                await (0, helpers_1.sendEmail)({
                     to: email,
                     subject: 'Verify Your Account',
                     text: '',
-                    html: (0, nodemailer_1.emailVerifyTemplate)(otp)
+                    html: (0, helpers_1.emailVerifyTemplate)(otp)
                 });
                 return newUser;
             }
@@ -123,7 +122,7 @@ exports.userResolver = {
                             message: `Incorrect password`,
                         };
                     }
-                    const issuedToken = (0, jwt_sign_1.getJwtToken)(user.dataValues.id, user.dataValues.email);
+                    const issuedToken = (0, helpers_1.getJwtToken)(user.dataValues.id, user.dataValues.email);
                     return {
                         success: true,
                         message: `Email: ${email} is verified you can proceed to login now`,

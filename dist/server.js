@@ -1,21 +1,31 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const user_resolver_1 = require("./resolvers/user.resolver");
-const user_typeDef_1 = require("./schema/user.typeDef");
 const server_1 = require("@apollo/server");
 const standalone_1 = require("@apollo/server/standalone");
+const merge_1 = require("@graphql-tools/merge");
+const resolvers_1 = require("./resolvers");
+const schema_1 = require("./schema");
 const config_1 = require("./config");
+const helpers_1 = require("./helpers");
 const initApp = async () => {
+    const mergedTypeDefs = (0, merge_1.mergeTypeDefs)([
+        schema_1.userTypeDefs,
+        schema_1.postTypeDefs
+    ]);
+    const mergedResolvers = (0, merge_1.mergeResolvers)([
+        resolvers_1.userResolver,
+        resolvers_1.postResolver
+    ]);
     await config_1.sequelize.authenticate();
-    console.log("Connection established successfully");
+    console.log('Connection has been established successfully.');
     const server = new server_1.ApolloServer({
-        typeDefs: user_typeDef_1.userTypeDefs,
-        resolvers: user_resolver_1.userResolver
+        typeDefs: mergedTypeDefs,
+        resolvers: mergedResolvers,
     });
     const { url } = await (0, standalone_1.startStandaloneServer)(server, {
         listen: { port: 4000 },
-        context: async ({ req }) => ({ req })
+        context: helpers_1.Context
     });
-    console.log(`Server running in port ${url}`);
+    console.log(`Server running: ${url}`);
 };
 initApp();
