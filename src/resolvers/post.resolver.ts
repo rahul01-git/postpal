@@ -34,7 +34,7 @@ export const postResolver = {
                 if (error) throw error
 
                 const post = await Post.findByPk(Number(args.post_id))
-                if(post){
+                if (post) {
                     const data = await Like.findOne({
                         where: {
                             user_id: context.user.id,
@@ -43,11 +43,11 @@ export const postResolver = {
                         }
                     })
 
-                    if(data){
+                    if (data) {
                         const liked_info = post.dataValues
                         liked_info.is_liked = true
                         return liked_info
-                    }else{
+                    } else {
                         const liked_info = post.dataValues
                         liked_info.is_liked = false
                         return liked_info
@@ -59,6 +59,41 @@ export const postResolver = {
                 throw new Error(`Error while retrieving post by id ${args.post_id}: ${error}`);
             }
 
+        },
+        getMyPosts: async (parent: ParentNode, args: {}, context: MyContext) => {
+            try {
+                if (!context.user) throw new Error('Authorization header is required')
+
+                const ownPosts = await Post.findAll({ where: { user_id: context.user?.id } })
+
+                const dataValue = []
+                if (!ownPosts) return []
+                if (ownPosts) {
+                    for (let i = 0; i < ownPosts.length; i++) {
+                      const data = await Like.findOne({
+                        where: {
+                          user_id: context.user?.id,
+                          post_id: ownPosts[i].dataValues.id,
+                          is_liked: true
+                        }
+                      });
+                      if (data) {
+                        ownPosts[i].dataValues.is_liked = true;
+                        dataValue.push(ownPosts[i].dataValues)
+                      }
+                      else {
+                        ownPosts[i].dataValues.is_liked = false;
+                        dataValue.push(ownPosts[i].dataValues)
+                      }
+                    }
+                  }
+                  return dataValue;
+          
+            } catch (error) {
+                console.log(`Error while fetching own posts: ${error}`);
+                throw new Error(`Error while fetching own posts: ${error}`);
+
+            }
         }
     },
     Mutation: {
