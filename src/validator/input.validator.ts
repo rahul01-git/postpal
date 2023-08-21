@@ -16,3 +16,6 @@ export const LoginSchema = Joi.object().keys({
     email: Joi.string().email().required().label("Email"),
     password: Joi.string().required().label('Password')
 })
+export const getPostByIdSchema = Joi.object().keys({
+    post_id: Joi.number().required().label("Post id")
+})

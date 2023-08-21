@@ -18,6 +18,7 @@ exports.postTypeDefs = `#graphql
 
     type Query {
       getAllPosts(data: GetAllPostInput!): [Post]
+      getPostById(post_id: Int!) : Post
     }
 
 
