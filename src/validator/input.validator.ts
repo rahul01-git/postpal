@@ -19,3 +19,7 @@ export const LoginSchema = Joi.object().keys({
 export const getPostByIdSchema = Joi.object().keys({
     post_id: Joi.number().required().label("Post id")
 })
+
+export const createPostValidator = Joi.object({
+    description:  Joi.string().min(3).max(1000)
+})

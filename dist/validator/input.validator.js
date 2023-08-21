@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPostByIdSchema = exports.LoginSchema = exports.verifyEmailSchema = exports.registerSchema = void 0;
+exports.createPostValidator = exports.getPostByIdSchema = exports.LoginSchema = exports.verifyEmailSchema = exports.registerSchema = void 0;
 const joi_1 = __importDefault(require("joi"));
 exports.registerSchema = joi_1.default.object().keys({
     full_name: joi_1.default.string().regex(/^[A-Za-z\s]+$/).required().label("Full Name").messages({
@@ -22,4 +22,7 @@ exports.LoginSchema = joi_1.default.object().keys({
 });
 exports.getPostByIdSchema = joi_1.default.object().keys({
     post_id: joi_1.default.number().required().label("Post id")
+});
+exports.createPostValidator = joi_1.default.object({
+    description: joi_1.default.string().min(3).max(1000)
 });

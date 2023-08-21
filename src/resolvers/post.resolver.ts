@@ -1,7 +1,7 @@
 import { MyContext } from "../helpers";
-import { GetAllPostInterface, PostInterface } from "../interfaces";
-import { Like, Post } from "../models";
-import { getPostByIdSchema } from "../validator";
+import { GetAllPostInterface, PostInterface, UserInterface } from "../interfaces";
+import { Like, Post, User } from "../models";
+import { createPostValidator, getPostByIdSchema } from "../validator";
 
 export const postResolver = {
     Query: {
@@ -29,8 +29,8 @@ export const postResolver = {
                 if (!context.user) {
                     throw new Error('Authorization Header missing')
                 }
-                const { error } = getPostByIdSchema.validate({ post_id: args.post_id });
 
+                const { error } = getPostByIdSchema.validate({ post_id: args.post_id });
                 if (error) throw error
 
                 const post = await Post.findByPk(Number(args.post_id))
@@ -70,25 +70,25 @@ export const postResolver = {
                 if (!ownPosts) return []
                 if (ownPosts) {
                     for (let i = 0; i < ownPosts.length; i++) {
-                      const data = await Like.findOne({
-                        where: {
-                          user_id: context.user?.id,
-                          post_id: ownPosts[i].dataValues.id,
-                          is_liked: true
+                        const data = await Like.findOne({
+                            where: {
+                                user_id: context.user?.id,
+                                post_id: ownPosts[i].dataValues.id,
+                                is_liked: true
+                            }
+                        });
+                        if (data) {
+                            ownPosts[i].dataValues.is_liked = true;
+                            dataValue.push(ownPosts[i].dataValues)
                         }
-                      });
-                      if (data) {
-                        ownPosts[i].dataValues.is_liked = true;
-                        dataValue.push(ownPosts[i].dataValues)
-                      }
-                      else {
-                        ownPosts[i].dataValues.is_liked = false;
-                        dataValue.push(ownPosts[i].dataValues)
-                      }
+                        else {
+                            ownPosts[i].dataValues.is_liked = false;
+                            dataValue.push(ownPosts[i].dataValues)
+                        }
                     }
-                  }
-                  return dataValue;
-          
+                }
+                return dataValue;
+
             } catch (error) {
                 console.log(`Error while fetching own posts: ${error}`);
                 throw new Error(`Error while fetching own posts: ${error}`);
@@ -96,7 +96,29 @@ export const postResolver = {
             }
         }
     },
+    Post: {
+        user: async (post: PostInterface) => await User.findByPk(post.user_id)
+    },
+    
     Mutation: {
+        createPost: async (parent: ParentNode, args: { data: PostInterface }, context: MyContext) => {
 
+            try {
+                if (!context.user) throw new Error('Authorization header is required')
+
+                const { error } = createPostValidator.validate(args.data);
+                if (error) throw error
+
+                const { description } = args.data
+                const newPost = await Post.create({
+                    description,
+                    user_id: context.user?.id
+                })
+                return newPost
+            } catch (error) {
+                console.error('Error adding new post: ', error)
+                return error
+            }
+        }
     }
 }

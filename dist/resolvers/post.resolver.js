@@ -94,5 +94,29 @@ exports.postResolver = {
             }
         }
     },
-    Mutation: {}
+    Post: {
+        user: async (post) => await models_1.User.findByPk(post.user_id)
+    },
+    Mutation: {
+        createPost: async (parent, args, context) => {
+            var _a;
+            try {
+                if (!context.user)
+                    throw new Error('Authorization header is required');
+                const { error } = validator_1.createPostValidator.validate(args.data);
+                if (error)
+                    throw error;
+                const { description } = args.data;
+                const newPost = await models_1.Post.create({
+                    description,
+                    user_id: (_a = context.user) === null || _a === void 0 ? void 0 : _a.id
+                });
+                return newPost;
+            }
+            catch (error) {
+                console.error('Error adding new post: ', error);
+                return error;
+            }
+        }
+    }
 };
