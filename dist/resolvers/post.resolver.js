@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.postResolver = void 0;
 const models_1 = require("../models");
 const validator_1 = require("../validator");
+const helpers_1 = require("../helpers");
 exports.postResolver = {
     Query: {
         getAllPosts: async (parent, args, context) => {
@@ -16,7 +17,25 @@ exports.postResolver = {
                     offset,
                     limit: size
                 });
-                return allPosts;
+                const dataValue = [];
+                for (let i = 0; i < allPosts.length; i++) {
+                    const data = await models_1.Like.findOne({
+                        where: {
+                            user_id: context.user.id,
+                            post_id: allPosts[i].dataValues.id,
+                            is_liked: true
+                        }
+                    });
+                    if (data) {
+                        allPosts[i].dataValues.is_liked = true;
+                        dataValue.push(allPosts[i].dataValues);
+                    }
+                    else {
+                        allPosts[i].dataValues.is_liked = false;
+                        dataValue.push(allPosts[i].dataValues);
+                    }
+                }
+                return dataValue;
             }
             catch (error) {
                 console.log(error);
@@ -28,9 +47,7 @@ exports.postResolver = {
                 if (!context.user) {
                     throw new Error('Authorization Header missing');
                 }
-                const { error } = validator_1.getPostByIdSchema.validate({ post_id: args.post_id });
-                if (error)
-                    throw error;
+                validator_1.getPostByIdSchema.validate({ post_id: args.post_id });
                 const post = await models_1.Post.findByPk(Number(args.post_id));
                 if (post) {
                     const data = await models_1.Like.findOne({
@@ -103,9 +120,7 @@ exports.postResolver = {
             try {
                 if (!context.user)
                     throw new Error('Authorization header is required');
-                const { error } = validator_1.createPostValidator.validate(args.data);
-                if (error)
-                    throw error;
+                validator_1.createPostValidator.validate(args.data);
                 const { description } = args.data;
                 const newPost = await models_1.Post.create({
                     description,
@@ -116,6 +131,48 @@ exports.postResolver = {
             catch (error) {
                 console.error('Error adding new post: ', error);
                 return error;
+            }
+        },
+        updatePost: async (parent, args, context) => {
+            try {
+                if (!context.user)
+                    throw new Error('Authorization header is required');
+                validator_1.updatePostValidator.validate(args.data);
+                const { description, post_id } = args.data;
+                await models_1.Post.update({ description }, {
+                    where: {
+                        id: post_id
+                    }
+                });
+                return {
+                    status_code: helpers_1.status.success.okay,
+                    message: `Post with id ${post_id} is updated successfully`
+                };
+            }
+            catch (error) {
+                console.log(`Error while updating post: ${error}`);
+                throw new Error(`Error while updating the post: ${error}`);
+            }
+        },
+        deletePost: async (parent, args, context) => {
+            try {
+                if (!context.user)
+                    throw new Error('Authorization header is required');
+                validator_1.idValidator.validate({
+                    post_id: args.post_id
+                });
+                const deletedPost = await models_1.Post.destroy({
+                    where: { id: args.post_id, user_id: context.user.id }
+                });
+                if (!deletedPost)
+                    throw new Error(`Sorry either the post doesn't exists or you are not the owner of post with id: ${args.post_id}`);
+                return {
+                    status_code: helpers_1.status.success.okay,
+                    message: `Post with id ${args.post_id} is deleted successfully`
+                };
+            }
+            catch (error) {
+                throw new Error(`Error while deleting the post: ${error}`);
             }
         }
     }

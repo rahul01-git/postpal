@@ -1,7 +1,9 @@
 import { MyContext } from "../helpers";
-import { GetAllPostInterface, PostInterface, UserInterface } from "../interfaces";
+import { GetAllPostInterface, PostInterface, UpdatePostInterface, UserInterface } from "../interfaces";
 import { Like, Post, User } from "../models";
-import { createPostValidator, getPostByIdSchema } from "../validator";
+import { createPostValidator, getPostByIdSchema, idValidator, updatePostValidator } from "../validator";
+import { status } from '../helpers';
+
 
 export const postResolver = {
     Query: {
@@ -18,7 +20,27 @@ export const postResolver = {
                     limit: size
                 })
 
-                return allPosts
+                const dataValue = [];
+                for (let i = 0; i < allPosts.length; i++) {
+                    const data = await Like.findOne({
+                        where: {
+                            user_id: context.user.id,
+                            post_id: allPosts[i].dataValues.id,
+                            is_liked: true
+                        }
+                    });
+                    if (data) {
+                        allPosts[i].dataValues.is_liked = true;
+                        dataValue.push(allPosts[i].dataValues)
+                    }
+                    else {
+                        allPosts[i].dataValues.is_liked = false;
+                        dataValue.push(allPosts[i].dataValues)
+                    }
+                }
+                return dataValue
+
+
             } catch (error) {
                 console.log(error)
                 throw new Error(`Error while retriving all posts: ${error}`)
@@ -32,6 +54,7 @@ export const postResolver = {
 
                 const { error } = getPostByIdSchema.validate({ post_id: args.post_id });
                 if (error) throw error
+
 
                 const post = await Post.findByPk(Number(args.post_id))
                 if (post) {
@@ -99,7 +122,7 @@ export const postResolver = {
     Post: {
         user: async (post: PostInterface) => await User.findByPk(post.user_id)
     },
-    
+
     Mutation: {
         createPost: async (parent: ParentNode, args: { data: PostInterface }, context: MyContext) => {
 
@@ -108,6 +131,7 @@ export const postResolver = {
 
                 const { error } = createPostValidator.validate(args.data);
                 if (error) throw error
+                
 
                 const { description } = args.data
                 const newPost = await Post.create({
@@ -118,6 +142,57 @@ export const postResolver = {
             } catch (error) {
                 console.error('Error adding new post: ', error)
                 return error
+            }
+        },
+        updatePost: async (parent: ParentNode, args: { data: UpdatePostInterface }, context: MyContext) => {
+            try {
+                if (!context.user) throw new Error('Authorization header is required')
+
+                const { error } = updatePostValidator.validate(args.data);
+                if (error) throw error
+
+
+                const { description, post_id } = args.data
+                await Post.update({ description }, {
+                    where: {
+                        id: post_id
+                    }
+                })
+
+                return {
+                    status_code: status.success.okay,
+                    message: `Post with id ${post_id} is updated successfully`
+                }
+
+            } catch (error) {
+                console.log(`Error while updating post: ${error}`);
+                throw new Error(`Error while updating the post: ${error}`);
+
+            }
+        },
+        deletePost: async (parent: ParentNode, args: { post_id: number }, context: MyContext) => {
+            try {
+                if (!context.user) throw new Error('Authorization header is required')
+
+                const { error } = idValidator.validate({
+                    post_id: args.post_id
+                });
+                if (error) throw error
+
+
+                const deletedPost = await Post.destroy({
+                    where: { id: args.post_id, user_id: context.user.id }
+                })
+
+                if (!deletedPost) throw new Error(`Sorry either the post doesn't exists or you are not the owner of post with id: ${args.post_id}`);
+
+                return {
+                    status_code: status.success.okay,
+                    message: `Post with id ${args.post_id} is deleted successfully`
+                }
+
+            } catch (error) {
+                throw new Error(`Error while deleting the post: ${error}`);
             }
         }
     }

@@ -8,6 +8,7 @@ const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const models_1 = require("../models");
 const validator_1 = require("../validator");
 const helpers_1 = require("../helpers");
+const helpers_2 = require("../helpers");
 exports.userResolver = {
     Query: {
         getAllUsers: async (_, {}) => {
@@ -62,7 +63,7 @@ exports.userResolver = {
                 if (user && user.dataValues.email_verified) {
                     console.log('Email is already verified');
                     return {
-                        success: true,
+                        status_code: helpers_2.status.success.okay,
                         message: `User: ${user.dataValues.full_name} has already verified their email: ${user.dataValues.email}`
                     };
                 }
@@ -74,20 +75,20 @@ exports.userResolver = {
                     });
                     console.log('Email Verification Success');
                     return {
-                        success: true,
+                        status_code: helpers_2.status.success.okay,
                         message: `User: ${user.dataValues.full_name} has successfully verified their email: ${user.dataValues.email}`
                     };
                 }
                 if (user && user.dataValues.otp !== otp) {
                     console.log('The otp does not matches');
                     return {
-                        success: false,
+                        status_code: helpers_2.status.errors.badRequest,
                         message: `The verification code does not match please re-enter the verification code`
                     };
                 }
                 else {
                     return {
-                        success: false,
+                        status_code: helpers_2.status.errors.badRequest,
                         message: `No user found with the provide email ${email}`
                     };
                 }
@@ -95,7 +96,7 @@ exports.userResolver = {
             catch (error) {
                 console.log(`Error while verifying email: ${error}`);
                 return {
-                    success: false,
+                    status_code: helpers_2.status.errors.internalServerError,
                     message: ` Error: ${error}`
                 };
             }
@@ -110,7 +111,7 @@ exports.userResolver = {
                 if (user && !user.dataValues.email_verified) {
                     console.log('Email is not verified yet!!!');
                     return {
-                        success: false,
+                        status_code: helpers_2.status.errors.badRequest,
                         message: `Email: ${email} is not verified yet please verify through code sent on your email`,
                     };
                 }
@@ -118,13 +119,13 @@ exports.userResolver = {
                     const isAuthorized = await bcryptjs_1.default.compare(password, user === null || user === void 0 ? void 0 : user.dataValues.password);
                     if (!isAuthorized) {
                         return {
-                            success: false,
+                            status_code: helpers_2.status.errors.badRequest,
                             message: `Incorrect password`,
                         };
                     }
                     const issuedToken = (0, helpers_1.getJwtToken)(user.dataValues.id, user.dataValues.email);
                     return {
-                        success: true,
+                        status_code: helpers_2.status.success.okay,
                         message: `Email: ${email} is verified you can proceed to login now`,
                         user_id: user.dataValues.id || null,
                         token: issuedToken.token,
@@ -133,14 +134,14 @@ exports.userResolver = {
                 }
                 else {
                     return {
-                        success: false,
+                        status_code: helpers_2.status.errors.badRequest,
                         message: `Email ${email} not registered`,
                     };
                 }
             }
             catch (error) {
                 return {
-                    success: false,
+                    status_code: helpers_2.status.errors.internalServerError,
                     message: `Error: ${error}`,
                 };
             }

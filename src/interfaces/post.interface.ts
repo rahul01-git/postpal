@@ -14,3 +14,8 @@ export interface GetAllPostInterface {
     page: number,
     size: number
 }
+
+export interface UpdatePostInterface {
+    post_id: number,
+    description: string
+}

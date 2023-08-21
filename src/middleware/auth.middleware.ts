@@ -10,7 +10,6 @@ export async function authenticate(bearerToken: string) {
         if(token){
             try {
                 const user = jwt.verify(token,JWT_SECRET)
-                // const user = (await User.findByPk(decoded.id) as UserInterface)
 
                 if(user) {
                     return {

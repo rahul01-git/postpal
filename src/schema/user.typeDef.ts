@@ -23,12 +23,12 @@ export const userTypeDefs = `#graphql
     }
 
     type Response{
-        success: Boolean
+        status_code: Int 
         message: String
     }
 
     type LoginResponse{
-        success: Boolean!
+        status_code: Int!
         message: String!
         user_id: Int
         token: String

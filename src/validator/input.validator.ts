@@ -23,3 +23,11 @@ export const getPostByIdSchema = Joi.object().keys({
 export const createPostValidator = Joi.object({
     description:  Joi.string().min(3).max(1000)
 })
+
+export const updatePostValidator = Joi.object({
+    post_id: Joi.number().required().label("Post id"),
+    description:  Joi.string().min(3).max(1000)
+})
+export const idValidator = Joi.object({
+    post_id: Joi.number().required().label("Post id"),
+})

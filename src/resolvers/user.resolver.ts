@@ -1,9 +1,12 @@
+import { ApolloServer } from '@apollo/server';
 import bcrypt from 'bcryptjs'
 
 import { UserEmailVerifyInterface, UserLoginInterface, UserSignupInterface } from "../interfaces";
 import { User } from "../models"
 import { LoginSchema, registerSchema, verifyEmailSchema } from "../validator";
 import { emailVerifyTemplate, sendEmail, getJwtToken } from '../helpers';
+import { status } from '../helpers';
+
 
 
 export const userResolver = {
@@ -22,9 +25,9 @@ export const userResolver = {
   Mutation: {
 
     registerUser: async (parent: ParentNode, args: { data: UserSignupInterface }) => {
-      const { error } = registerSchema.validate(args.data)
-      if (error) throw error
-
+      const {error} = registerSchema.validate(args.data)
+      if(error) throw error
+ 
       const { full_name, email, password } = args.data
       const user = await User.findOne({ where: { email } })
       if (user) throw new Error(`Email:${email} already used`)
@@ -53,16 +56,16 @@ export const userResolver = {
 
     verifyEmail: async (parent: ParentNode, args: { data: UserEmailVerifyInterface }) => {
       try {
-        const { error } = verifyEmailSchema.validate(args.data)
-        if (error) throw error
-
+        const {error} = verifyEmailSchema.validate(args.data)
+        if(error) throw error
+ 
         const { email, code } = args.data
         const otp = Number(code)
         const user = await User.findOne({ where: { email } })
         if (user && user.dataValues.email_verified) {
           console.log('Email is already verified');
           return {
-            success: true,
+            status_code: status.success.okay,
             message: `User: ${user.dataValues.full_name} has already verified their email: ${user.dataValues.email}`
           }
         }
@@ -77,19 +80,19 @@ export const userResolver = {
           )
           console.log('Email Verification Success');
           return {
-            success: true,
+            status_code: status.success.okay,
             message: `User: ${user.dataValues.full_name} has successfully verified their email: ${user.dataValues.email}`
           }
         }
         if (user && user.dataValues.otp !== otp) {
           console.log('The otp does not matches');
           return {
-            success: false,
+            status_code: status.errors.badRequest,
             message: `The verification code does not match please re-enter the verification code`
           }
         } else {
           return {
-            success: false,
+            status_code: status.errors.badRequest,
             message: `No user found with the provide email ${email}`
           }
         }
@@ -97,7 +100,7 @@ export const userResolver = {
       } catch (error) {
         console.log(`Error while verifying email: ${error}`)
         return {
-          success: false,
+          status_code: status.errors.internalServerError,
           message: ` Error: ${error}`
         }
 
@@ -106,16 +109,16 @@ export const userResolver = {
 
     loginUser: async (parent: ParentNode, args: { data: UserLoginInterface }) => {
       try {
-        const { error } = LoginSchema.validate(args.data)
-        if (error) throw error
-
+        const {error} = LoginSchema.validate(args.data)
+        if(error) throw error
+ 
         const { email, password } = args.data
         const user = await User.findOne({ where: { email } })
 
         if (user && !user.dataValues.email_verified) {
           console.log('Email is not verified yet!!!');
           return {
-            success: false,
+            status_code: status.errors.badRequest,
             message: `Email: ${email} is not verified yet please verify through code sent on your email`,
           }
         }
@@ -124,14 +127,14 @@ export const userResolver = {
 
           if (!isAuthorized) {
             return {
-              success: false,
+              status_code: status.errors.badRequest,
               message: `Incorrect password`,
             }
           }
 
           const issuedToken = getJwtToken(user.dataValues.id, user.dataValues.email)
           return {
-            success: true,
+            status_code: status.success.okay,
             message: `Email: ${email} is verified you can proceed to login now`,
             user_id: user.dataValues.id || null,
             token: issuedToken.token,
@@ -139,7 +142,7 @@ export const userResolver = {
           }
         } else {
           return {
-            success: false,
+            status_code: status.errors.badRequest,
             message: `Email ${email} not registered`,
           }
 
@@ -147,7 +150,7 @@ export const userResolver = {
 
       } catch (error) {
         return {
-          success: false,
+          status_code: status.errors.internalServerError,
           message: `Error: ${error}`,
         }
       }

@@ -13,7 +13,6 @@ async function authenticate(bearerToken) {
         if (token) {
             try {
                 const user = jsonwebtoken_1.default.verify(token, JWT_SECRET);
-                // const user = (await User.findByPk(decoded.id) as UserInterface)
                 if (user) {
                     return {
                         user,

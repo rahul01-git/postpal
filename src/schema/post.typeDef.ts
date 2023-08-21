@@ -24,6 +24,16 @@ export const postTypeDefs = `#graphql
         description: String,
     }
 
+    input UpdatePostInput {
+        description: String,
+        post_id: Int
+    } 
+
+    type Response {
+        status_code: Int
+        message: String
+    }
+
     type Query {
       getAllPosts(data: GetAllPostInput!): [Post]
       getPostById(post_id: Int!) : Post
@@ -32,6 +42,8 @@ export const postTypeDefs = `#graphql
 
     type Mutation{
         createPost(data: UploadPostInput!) : Post
+        updatePost(data: UpdatePostInput!) : Response!
+        deletePost(post_id: Int!) : Response!
     }
 
 
