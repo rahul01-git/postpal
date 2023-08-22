@@ -5,6 +5,27 @@ const helpers_1 = require("../helpers");
 const models_1 = require("../models");
 const validator_1 = require("../validator");
 exports.commentResolver = {
+    Query: {
+        getComments: async (parent, args, context) => {
+            try {
+                if (!context.token)
+                    throw new Error('Authorization header is missing');
+                validator_1.idValidator.validate({
+                    post_id: args.post_id
+                });
+                const comments = await models_1.Comment.findAll({ where: { post_id: args.post_id } });
+                return comments;
+            }
+            catch (error) {
+                console.error('Error fetching all comment:', error);
+                throw new Error(`Error fetching all comment: ${error}`);
+            }
+        }
+    },
+    Comment: {
+        user: async (comment) => await models_1.User.findByPk(comment.user_id),
+        post: async (comment) => await models_1.Post.findByPk(comment.post_id)
+    },
     Mutation: {
         createComment: async (parent, args, context) => {
             var _a;

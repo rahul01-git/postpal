@@ -4,7 +4,16 @@ export const commentTypeDefs = `#graphql
         id: Int!
         description: String!
         user_id: Int!
+        post: Post
+        user: User
         post_id: Int!
+    }
+
+    type Post {
+        description: String!
+    }
+    type User {
+        full_name: String!,
     }
 
     type Response {
@@ -22,6 +31,10 @@ export const commentTypeDefs = `#graphql
         comment_id: Int!
     }
 
+    type Query {
+        getComments(post_id: Int!) : [Comment]
+
+    }
 
     type Mutation {
         createComment(data: PostCommentInput!) : Comment

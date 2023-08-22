@@ -1,9 +1,32 @@
 import { MyContext, status } from "../helpers";
 import { CommentInterface, UpdateCommentInterface } from "../interfaces";
-import { Comment, Post } from "../models";
-import { deleteCommentValidator, postCommentValidator, updateCommentValidator } from "../validator";
+import { Comment, Post, User } from "../models";
+import { deleteCommentValidator, idValidator, postCommentValidator, updateCommentValidator } from "../validator";
 
 export const commentResolver = {
+    Query: {
+        getComments: async (parent: ParentNode, args: { post_id: number }, context: MyContext) => {
+            try {
+                if (!context.token) throw new Error('Authorization header is missing')
+
+                idValidator.validate({
+                    post_id: args.post_id
+                });
+
+                const comments = await Comment.findAll({where: {post_id: args.post_id}})
+
+                return comments
+
+            } catch (error) {
+                console.error('Error fetching all comment:', error);
+                throw new Error(`Error fetching all comment: ${error}`)
+            }
+        }
+    },
+    Comment: {
+        user: async (comment: CommentInterface) => await User.findByPk(comment.user_id),
+        post: async (comment: CommentInterface) => await Post.findByPk(comment.post_id)
+    },
     Mutation: {
         createComment: async (parent: ParentNode, args: { data: CommentInterface }, context: MyContext) => {
             try {
