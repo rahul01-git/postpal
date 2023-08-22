@@ -31,3 +31,16 @@ export const updatePostValidator = Joi.object({
 export const idValidator = Joi.object({
     post_id: Joi.number().required().label("Post id"),
 })
+
+export const postCommentValidator = Joi.object().keys({
+    post_id: Joi.number().required().label("Post id"),
+    description:  Joi.string().min(3).max(1000)
+})
+
+export const updateCommentValidator = Joi.object().keys({
+    comment_id: Joi.number().required().label("Comment id"),
+    description:  Joi.string().min(3).max(1000)
+})
+export const deleteCommentValidator = Joi.object().keys({
+    id: Joi.number().required().label("Comment id"),
+})

@@ -12,12 +12,10 @@ module.exports = {
             user_id: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
-                unique: true
             },
             post_id: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
-                unique: true,
             },
             description: {
                 type: DataTypes.STRING,

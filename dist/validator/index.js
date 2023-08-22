@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.idValidator = exports.updatePostValidator = exports.createPostValidator = exports.getPostByIdSchema = exports.LoginSchema = exports.verifyEmailSchema = exports.registerSchema = void 0;
+exports.deleteCommentValidator = exports.updateCommentValidator = exports.postCommentValidator = exports.idValidator = exports.updatePostValidator = exports.createPostValidator = exports.getPostByIdSchema = exports.LoginSchema = exports.verifyEmailSchema = exports.registerSchema = void 0;
 var input_validator_1 = require("./input.validator");
 Object.defineProperty(exports, "registerSchema", { enumerable: true, get: function () { return input_validator_1.registerSchema; } });
 Object.defineProperty(exports, "verifyEmailSchema", { enumerable: true, get: function () { return input_validator_1.verifyEmailSchema; } });
@@ -9,3 +9,6 @@ Object.defineProperty(exports, "getPostByIdSchema", { enumerable: true, get: fun
 Object.defineProperty(exports, "createPostValidator", { enumerable: true, get: function () { return input_validator_1.createPostValidator; } });
 Object.defineProperty(exports, "updatePostValidator", { enumerable: true, get: function () { return input_validator_1.updatePostValidator; } });
 Object.defineProperty(exports, "idValidator", { enumerable: true, get: function () { return input_validator_1.idValidator; } });
+Object.defineProperty(exports, "postCommentValidator", { enumerable: true, get: function () { return input_validator_1.postCommentValidator; } });
+Object.defineProperty(exports, "updateCommentValidator", { enumerable: true, get: function () { return input_validator_1.updateCommentValidator; } });
+Object.defineProperty(exports, "deleteCommentValidator", { enumerable: true, get: function () { return input_validator_1.deleteCommentValidator; } });

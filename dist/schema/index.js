@@ -17,3 +17,4 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./user.typeDef"), exports);
 __exportStar(require("./post.typeDef"), exports);
 __exportStar(require("./like.typeDefs"), exports);
+__exportStar(require("./comment.typeDefs"), exports);

@@ -17,3 +17,4 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./user.resolver"), exports);
 __exportStar(require("./post.resolver"), exports);
 __exportStar(require("./like.resolver"), exports);
+__exportStar(require("./comment.resolver"), exports);

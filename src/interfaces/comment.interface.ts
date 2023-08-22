@@ -1,11 +1,11 @@
 import { Model } from "sequelize";
 
-export interface CommentInstance extends Model{
-    id: number,
-    user_id:number,
+export interface CommentInterface extends Model{
     post_id:number,
     description:string,
-    created_at: Date;
-    updated_at: Date;
-    deleted_at: Date | null;
+}
+
+export interface UpdateCommentInterface {
+    description: string,
+    comment_id: number
 }

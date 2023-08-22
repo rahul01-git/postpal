@@ -12,11 +12,13 @@ const initApp = async () => {
         schema_1.userTypeDefs,
         schema_1.postTypeDefs,
         schema_1.likeTypeDefs,
+        schema_1.commentTypeDefs,
     ]);
     const mergedResolvers = (0, merge_1.mergeResolvers)([
         resolvers_1.userResolver,
         resolvers_1.postResolver,
-        resolvers_1.likeResolver
+        resolvers_1.likeResolver,
+        resolvers_1.commentResolver
     ]);
     await config_1.sequelize.authenticate();
     console.log('Connection has been established successfully.');

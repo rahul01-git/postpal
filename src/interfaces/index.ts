@@ -1,5 +1,5 @@
 export { UserInterface,UserSignupInterface,UserEmailVerifyInterface,UserLoginInterface } from './user.interface'
 export { PostInterface,GetAllPostInterface,UpdatePostInterface } from './post.interface'
-export { CommentInstance } from './comment.interface'
+export { CommentInterface, UpdateCommentInterface } from './comment.interface'
 export { ReplyInstance } from './reply.interface'
 export { LikeInterface } from './like.interface'
