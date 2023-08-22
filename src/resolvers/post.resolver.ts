@@ -1,5 +1,5 @@
 import { MyContext } from "../helpers";
-import { GetAllPostInterface, PostInterface, UpdatePostInterface, UserInterface } from "../interfaces";
+import { GetAllPostInterface, PostInterface, UpdatePostInterface } from "../interfaces";
 import { Like, Post, User } from "../models";
 import { createPostValidator, getPostByIdSchema, idValidator, updatePostValidator } from "../validator";
 import { status } from '../helpers';
@@ -43,7 +43,7 @@ export const postResolver = {
 
             } catch (error) {
                 console.log(error)
-                throw new Error(`Error while retriving all posts: ${error}`)
+                throw new Error(`Error while retrieving all posts: ${error}`)
             }
         },
         getPostById: async (parent: ParentNode, args: { post_id: number }, context: MyContext) => {

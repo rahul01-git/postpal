@@ -1,8 +1,8 @@
 import { ApolloServer } from '@apollo/server'
 import { startStandaloneServer } from '@apollo/server/standalone'
 import {mergeTypeDefs, mergeResolvers} from '@graphql-tools/merge'
-import { userResolver,postResolver } from './resolvers'
-import { userTypeDefs,postTypeDefs } from './schema'
+import { userResolver,postResolver,likeResolver } from './resolvers'
+import { userTypeDefs,postTypeDefs,likeTypeDefs } from './schema'
 import { sequelize } from './config'
 import { Context } from './helpers'
 import { UserInterface } from './interfaces'
@@ -16,12 +16,14 @@ const initApp = async () => {
     }
     const mergedTypeDefs = mergeTypeDefs([
         userTypeDefs,
-        postTypeDefs
+        postTypeDefs,
+        likeTypeDefs,
     ])
     
     const mergedResolvers = mergeResolvers([
         userResolver,
-        postResolver
+        postResolver,
+        likeResolver
     ])
     await sequelize.authenticate();
     console.log('Connection has been established successfully.');

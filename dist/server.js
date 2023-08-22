@@ -10,11 +10,13 @@ const helpers_1 = require("./helpers");
 const initApp = async () => {
     const mergedTypeDefs = (0, merge_1.mergeTypeDefs)([
         schema_1.userTypeDefs,
-        schema_1.postTypeDefs
+        schema_1.postTypeDefs,
+        schema_1.likeTypeDefs,
     ]);
     const mergedResolvers = (0, merge_1.mergeResolvers)([
         resolvers_1.userResolver,
-        resolvers_1.postResolver
+        resolvers_1.postResolver,
+        resolvers_1.likeResolver
     ]);
     await config_1.sequelize.authenticate();
     console.log('Connection has been established successfully.');

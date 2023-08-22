@@ -39,7 +39,7 @@ exports.postResolver = {
             }
             catch (error) {
                 console.log(error);
-                throw new Error(`Error while retriving all posts: ${error}`);
+                throw new Error(`Error while retrieving all posts: ${error}`);
             }
         },
         getPostById: async (parent, args, context) => {
@@ -47,7 +47,9 @@ exports.postResolver = {
                 if (!context.user) {
                     throw new Error('Authorization Header missing');
                 }
-                validator_1.getPostByIdSchema.validate({ post_id: args.post_id });
+                const { error } = validator_1.getPostByIdSchema.validate({ post_id: args.post_id });
+                if (error)
+                    throw error;
                 const post = await models_1.Post.findByPk(Number(args.post_id));
                 if (post) {
                     const data = await models_1.Like.findOne({
@@ -120,7 +122,9 @@ exports.postResolver = {
             try {
                 if (!context.user)
                     throw new Error('Authorization header is required');
-                validator_1.createPostValidator.validate(args.data);
+                const { error } = validator_1.createPostValidator.validate(args.data);
+                if (error)
+                    throw error;
                 const { description } = args.data;
                 const newPost = await models_1.Post.create({
                     description,
@@ -137,7 +141,9 @@ exports.postResolver = {
             try {
                 if (!context.user)
                     throw new Error('Authorization header is required');
-                validator_1.updatePostValidator.validate(args.data);
+                const { error } = validator_1.updatePostValidator.validate(args.data);
+                if (error)
+                    throw error;
                 const { description, post_id } = args.data;
                 await models_1.Post.update({ description }, {
                     where: {
@@ -158,9 +164,11 @@ exports.postResolver = {
             try {
                 if (!context.user)
                     throw new Error('Authorization header is required');
-                validator_1.idValidator.validate({
+                const { error } = validator_1.idValidator.validate({
                     post_id: args.post_id
                 });
+                if (error)
+                    throw error;
                 const deletedPost = await models_1.Post.destroy({
                     where: { id: args.post_id, user_id: context.user.id }
                 });

@@ -16,7 +16,7 @@ module.exports = {
         allowNull: false
       },
       email_verified: {
-        type: DataTypes.STRING,
+        type: DataTypes.BOOLEAN,
         allowNull: false,
         default:false
       },

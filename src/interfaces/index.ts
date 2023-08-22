@@ -2,4 +2,4 @@ export { UserInterface,UserSignupInterface,UserEmailVerifyInterface,UserLoginInt
 export { PostInterface,GetAllPostInterface,UpdatePostInterface } from './post.interface'
 export { CommentInstance } from './comment.interface'
 export { ReplyInstance } from './reply.interface'
-export { LikeInstance } from './like.interface'
+export { LikeInterface } from './like.interface'

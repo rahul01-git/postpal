@@ -1,6 +1,6 @@
 import { Model } from "sequelize";
 
-export interface LikeInstance extends Model{
+export interface LikeInterface extends Model{
     id: number,
     user_id:number,
     post_id:number,

@@ -17,7 +17,6 @@ const Like = sequelize.define(
                 model: User,
                 key: 'id'
             },
-            unique: true,
         },
         post_id: {
             type: DataTypes.INTEGER,
@@ -26,7 +25,6 @@ const Like = sequelize.define(
                 model: Post,
                 key: 'id'
             },
-            unique: true
         },
         is_liked: {
             type: DataTypes.BOOLEAN,
