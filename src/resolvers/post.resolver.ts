@@ -1,6 +1,6 @@
 import { MyContext } from "../helpers";
 import { GetAllPostInterface, PostInterface, UpdatePostInterface } from "../interfaces";
-import { Like, Post, User } from "../models";
+import { Comment, Like, Post, User } from "../models";
 import { createPostValidator, getPostByIdSchema, idValidator, updatePostValidator } from "../validator";
 import { status } from '../helpers';
 
@@ -120,7 +120,8 @@ export const postResolver = {
         }
     },
     Post: {
-        user: async (post: PostInterface) => await User.findByPk(post.user_id)
+        user: async (post: PostInterface) => await User.findByPk(post.user_id),
+        comment: async (post: PostInterface) => await Comment.findAll({where : {post_id: post.id}})
     },
 
     Mutation: {

@@ -114,7 +114,8 @@ exports.postResolver = {
         }
     },
     Post: {
-        user: async (post) => await models_1.User.findByPk(post.user_id)
+        user: async (post) => await models_1.User.findByPk(post.user_id),
+        comment: async (post) => await models_1.Comment.findAll({ where: { post_id: post.id } })
     },
     Mutation: {
         createPost: async (parent, args, context) => {

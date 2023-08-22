@@ -22,6 +22,7 @@ export const commentTypeDefs = `#graphql
         comment_id: Int!
     }
 
+
     type Mutation {
         createComment(data: PostCommentInput!) : Comment
         updateComment(data: UpdateCommentInput!) : Response

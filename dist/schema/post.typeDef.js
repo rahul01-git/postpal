@@ -10,12 +10,17 @@ exports.postTypeDefs = `#graphql
         user_id: Int!
         user: User
         is_liked: Boolean
+        comment: [Comment]
     }
     type User {
         id: Int,
         full_name: String!,
         email:String!,
         email_verified: Boolean!  
+    }
+
+    type Comment {
+        description: String!
     }
 
     input GetAllPostInput {
